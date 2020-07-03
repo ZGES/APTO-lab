@@ -1,0 +1,7 @@
+set terminal png
+set output "wykres.png"
+set yrange [-0.1:1.1]
+set title "Results (k = 3, n = 50, T = 100)" font "Arial, 16"
+set xlabel "value of a" font "Arial, 14"
+set ylabel "probability of satisfiability" font "Arial, 14"
+plot "results.txt" using 1:2 notitle with lines
