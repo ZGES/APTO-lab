@@ -1,6 +1,11 @@
-from vc_2approx import coverage_2approx
+from time import time
 
-graphs = [
+from zad2 import dimacs as dim
+from zad2 import vertexCover as vc
+from zad2 import weightedVC as wvc
+from zad2 import approxVC as avc
+
+graph_names = [
     "e5",
     "e10",
     "e20",
@@ -15,13 +20,6 @@ graphs = [
     "k330_a",
     "k330_b",
     "k330_c",
-    "k330_d",
-    "k330_e",
-    "k330_f",
-    "f30",
-    "f35",
-    "f40",
-    "f56",
     "m20",
     "m30",
     "m40",
@@ -31,17 +29,41 @@ graphs = [
     "p35",
     "p60",
     "p150",
-    "p200",
     "r30_01",
     "r30_05",
     "r50_001",
     "r50_01",
-    "r50_05",
-    "r100_005",
     "r100_01",
-    "r200_001",
-    "r200_005"
-]
+    "r100_005"]
 
-for name in graphs:
-    coverage_2approx(name)
+for name in graph_names:
+    path = '..\\graph\\' + name
+    sol_name = path + '.sol'
+    w_sol_name = path + 'W.sol'
+    a_sol_name = path + 'A.sol'
+
+    graph = dim.loadGraph(path)
+    graph_list = dim.edgeList(graph)
+
+    timeExact = time()
+    solution = vc.solveVC(graph)
+    timeExact = round(time() - timeExact, 5)
+
+    timeWeight = time()
+    solutionW = wvc.solveWeightedVC(graph, 1.0)
+    timeWeight = round(time() - timeWeight, 5)
+
+    timeApprox = time()
+    solutionA = avc.approxSolveVC(graph)
+    timeApprox = round(time() - timeApprox, 5)
+
+    if solution is not None and dim.isVC(graph_list, solution):
+        #dim.saveSolution(sol_name, solution)
+        print("Solved ", name, "using ", len(solution), " vertices in time: ", timeExact)
+    if solutionW is not None and dim.isVC(graph_list, solutionW):
+        #dim.saveSolution(w_sol_name, solutionW)
+        print("Solved with weight ", name, "using ", len(solutionW), " vertices in time: ", timeWeight)
+    if solutionA is not None and dim.isVC(graph_list, solutionA):
+        #dim.saveSolution(a_sol_name, solutionA)
+        print("Solved with approximation ", name, "using ", len(solutionA), " vertices in time: ", timeApprox)
+    print("\n")
